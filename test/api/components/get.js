@@ -99,6 +99,19 @@ describe(endpointName, function () {
       acceptsHtml(path, {name: 'missing', version: 'missing'}, 406);
     });
 
+    describe('/components/:name@list', function () {
+      var path = this.title;
+
+      acceptsJson(path, {name: 'invalid'}, 404);
+      acceptsJson(path, {name: 'valid'}, 200, { list: [
+        'localhost.example.com/components/valid/instances/valid',
+        'localhost.example.com/components/valid/instances/valid@valid'
+      ] });
+
+      acceptsHtml(path, {name: 'invalid'}, 404, '404 Not Found');
+      acceptsHtml(path, {name: 'valid'}, 406);
+    });
+
     describe('/components/:name/instances', function () {
       var path = this.title;
 
@@ -109,6 +122,19 @@ describe(endpointName, function () {
       acceptsHtml(path, {name: 'invalid'}, 404, '404 Not Found');
       acceptsHtml(path, {name: 'valid'}, 406);
       acceptsHtml(path, {name: 'missing'}, 406);
+    });
+
+    describe('/components/:name/instances@list', function () {
+      var path = this.title;
+
+      acceptsJson(path, {name: 'invalid'}, 404);
+      acceptsJson(path, {name: 'valid'}, 200, { list: [
+        'localhost.example.com/components/valid/instances/valid',
+        'localhost.example.com/components/valid/instances/valid@valid'
+      ] });
+
+      acceptsHtml(path, {name: 'invalid'}, 404, '404 Not Found');
+      acceptsHtml(path, {name: 'valid'}, 406);
     });
 
     describe('/components/:name/instances/:id', function () {
@@ -147,10 +173,24 @@ describe(endpointName, function () {
       acceptsJson(path, {name: 'invalid', version: 'missing', id: 'valid'}, 404);
       acceptsJson(path, {name: 'valid', version: 'missing', id: 'valid'}, 404);
       acceptsJson(path, {name: 'valid', version: 'missing', id: 'missing'}, 404);
+      acceptsJson(path, {name: 'valid', version: 'valid', id: 'valid'}, 200, data);
 
       acceptsHtml(path, {name: 'invalid', version: 'missing', id: 'valid'}, 404, '404 Not Found');
       acceptsHtml(path, {name: 'valid', version: 'missing', id: 'valid'}, 406);
       acceptsHtml(path, {name: 'valid', version: 'missing', id: 'missing'}, 406);
+      acceptsHtml(path, {name: 'valid', version: 'valid', id: 'valid'}, 406);
+    });
+
+    describe('/components/:name/instances/:id@list', function () {
+      var path = this.title;
+
+      acceptsJson(path, {name: 'invalid', id: 'valid'}, 404);
+      acceptsJson(path, {name: 'valid', id: 'missing'}, 200, { list: [] });
+      acceptsJson(path, {name: 'valid', id: 'valid'}, 200, { list: ['localhost.example.com/components/valid/instances/valid@valid'] });
+
+      acceptsHtml(path, {name: 'invalid', id: 'valid'}, 404, '404 Not Found');
+      acceptsHtml(path, {name: 'valid', id: 'missing'}, 406);
+      acceptsHtml(path, {name: 'valid', id: 'valid'}, 406);
     });
   });
 });
